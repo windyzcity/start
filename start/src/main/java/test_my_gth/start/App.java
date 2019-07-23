@@ -17,7 +17,7 @@ public class App
     	System.out.println("t1");
     }
     public static void t2() {
-    	System.out.println("t22");
+    	System.out.println("t2");
     }
     
 }
