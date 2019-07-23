@@ -12,4 +12,8 @@ public class App
     {
         System.out.println( "Hello World!" +new Date());
     }
+    
+    public static void t1() {
+    	System.out.println("t1");
+    }
 }
