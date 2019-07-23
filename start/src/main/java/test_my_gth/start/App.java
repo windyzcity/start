@@ -16,4 +16,8 @@ public class App
     public static void t1() {
     	System.out.println("t1");
     }
+    public static void t2() {
+    	System.out.println("t2");
+    }
+    
 }
