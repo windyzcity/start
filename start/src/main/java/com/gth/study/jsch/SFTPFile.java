@@ -8,13 +8,24 @@ import java.util.Properties;
  * sftp通过上传文件
  * 1.直接上传到目标机
  * 2.通过跳板机上传到目标机
- *
+ * <p>
  * 参考：
  * 1.https://www.cnblogs.com/zpch/p/7999328.html
  * 2.http://www.jcraft.com/jsch/examples/JumpHosts.java.html
  *
  * @date 2020/10/6
- *
+ * <p>
+ * [root@localhost ~]# ssh -V
+ * OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017   --ok
+ * <p>
+ * lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+ * inet 127.0.0.1  netmask 255.0.0.0
+ * inet6 ::1  prefixlen 128  scopeid 0x10<host>
+ * loop  txqueuelen 1000  (Local Loopback)
+ * RX packets 1030  bytes 90528 (88.4 KiB)
+ * RX errors 0  dropped 0  overruns 0  frame 0
+ * TX packets 1030  bytes 90528 (88.4 KiB)
+ * TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
  */
 public class SFTPFile {
 
@@ -45,10 +56,7 @@ public class SFTPFile {
             JSch jsch = new JSch();
             sshSession = jsch.getSession(userName, ip, port);
             sshSession.setPassword(pwd);
-            Properties sshConfig = new Properties();
-            sshConfig.put("StrictHostKeyChecking", "no");
-            sshConfig.put("PreferredAuthentications", "password,keyboard-interactive");
-            sshSession.setConfig(sshConfig);
+            sshSession.setConfig(sshConfig());
             sshSession.connect(100 * 1000);//可设置超时时间
             //完成上诉映射之后，即可通过本地端口连接了
             if (hostIp != null && !"".equals(hostIp)) {
@@ -91,6 +99,13 @@ public class SFTPFile {
         }
     }
 
+    private static Properties sshConfig() {
+        Properties sshConfig = new Properties();
+        sshConfig.put("StrictHostKeyChecking", "no");
+        sshConfig.put("PreferredAuthentications", "password,keyboard-interactive");
+        return sshConfig;
+    }
+
     /**
      * 通过跳板机与目标机建立的session
      *
@@ -108,10 +123,7 @@ public class SFTPFile {
             assingedPort = sshSession.setPortForwardingL(0, hostIp, 22);
             System.out.println("assingedPort=" + assingedPort + ",hostIp=" + hostIp);
             session = jsch.getSession("gth", "127.0.0.1", assingedPort);
-            Properties remoteCfg = new Properties();
-            remoteCfg.put("StrictHostKeyChecking", "no");
-            remoteCfg.put("PreferredAuthentications", "password,keyboard-interactive");
-            session.setConfig(remoteCfg);
+            session.setConfig(sshConfig());
             session.setPassword("gth123");
             session.connect(100 * 1000);
             System.out.println("Dest by Hop session is ok");
